@@ -18,22 +18,26 @@ Predict_covid_cases.h5 is the saved model
 
 # Outcome
 
-The 𝑀𝑒𝑎𝑛 𝐴𝑏𝑠𝑜𝑙𝑢𝑡𝑒 𝑃𝑒𝑟𝑐𝑒𝑛𝑡𝑎𝑔𝑒 𝐸𝑟𝑟𝑜𝑟 (MAPE) is [0.14362924] % 
+The 𝑀𝑒𝑎𝑛 𝐴𝑏𝑠𝑜𝑙𝑢𝑡𝑒 𝑃𝑒𝑟𝑐𝑒𝑛𝑡𝑎𝑔𝑒 𝐸𝑟𝑟𝑜𝑟 (MAPE) is 0.1380907 % 
 
+20/20 [==============================] - 1s 72ms/step - loss: 0.0011 - mse: 0.0011
+Epoch 97/100
+20/20 [==============================] - 1s 68ms/step - loss: 0.0012 - mse: 0.0012   
 Epoch 98/100
-20/20 [==============================] - 1s 45ms/step - loss: 0.0012 - mse: 0.0012
+20/20 [==============================] - 1s 72ms/step - loss: 0.0015 - mse: 0.0015
 Epoch 99/100
-20/20 [==============================] - 1s 46ms/step - loss: 0.0014 - mse: 0.0014
+20/20 [==============================] - 1s 69ms/step - loss: 0.0014 - mse: 0.0014
 Epoch 100/100
-20/20 [==============================] - 1s 41ms/step - loss: 0.0013 - mse: 0.0013
-dict_keys(['loss', 'mse'])
+20/20 [==============================] - 1s 71ms/step - loss: 0.0014 - mse: 0.0014
 
-Mean Absolute Percentage Error (MAPE) is [0.14362924] %
+
+Mean Absolute Percentage Error (MAPE) is [0.1380907] %
 
 
 
 # Credit
 Credit goes to MoH Malaysia for the dataset
+
 https://github.com/MoH-Malaysia/covid19-public
 
 
