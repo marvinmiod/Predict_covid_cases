@@ -9,7 +9,7 @@ This is a project built using deep learning model with LSTM neural network to pr
 # How to use it
 Clone the repo and run it.
 
-Predict_covid_module.py is a script that contains the class module of the Explatory Data Analysis (EDA), Model Creation, Model Evaluation and Training History Classes.
+Predict_covid_module.py is a script that contains the class module (WIP).
 
 Predict_covid_cases.py is a script for deployment of the test dataset
 
@@ -18,14 +18,17 @@ Predict_covid_cases.h5 is the saved model
 
 # Outcome
 
-The 𝑀𝑒𝑎𝑛 𝐴𝑏𝑠𝑜𝑙𝑢𝑡𝑒 𝑃𝑒𝑟𝑐𝑒𝑛𝑡𝑎𝑔𝑒 𝐸𝑟𝑟𝑜𝑟 (MAPE) is 
+The 𝑀𝑒𝑎𝑛 𝐴𝑏𝑠𝑜𝑙𝑢𝑡𝑒 𝑃𝑒𝑟𝑐𝑒𝑛𝑡𝑎𝑔𝑒 𝐸𝑟𝑟𝑜𝑟 (MAPE) is [0.14362924] % 
 
+Epoch 98/100
+20/20 [==============================] - 1s 45ms/step - loss: 0.0012 - mse: 0.0012
+Epoch 99/100
+20/20 [==============================] - 1s 46ms/step - loss: 0.0014 - mse: 0.0014
+Epoch 100/100
+20/20 [==============================] - 1s 41ms/step - loss: 0.0013 - mse: 0.0013
+dict_keys(['loss', 'mse'])
 
-
-
-
-
-
+Mean Absolute Percentage Error (MAPE) is [0.14362924] %
 
 
 
@@ -47,26 +50,22 @@ https://github.com/MoH-Malaysia/covid19-public
 
 
 ##
-### 3. Summary report and accuracy score
+### 3. Number of Covid 19 cases (train data)
 
-![image](image/Summary_report.png)
-
-
-##
-### 4. Confusion Matrix
-
-![image](image/Confusion_matrix.png)
+![image](image/Train_graph.png)
 
 
 ##
-### 5. Training & validation accuracy plot
+### 4. Number of Covid 19 cases (test data)
 
-![image](image/Training_accuracy.png)
+![image](image/Test_graph.png)
 
 
 ##
-### 6. Training & validation loss plot
+### 5. Number of Covid 19 cases graph - Predicted vs Actual
 
-![image](image/Training_loss.png)
+![image](image/Predict_actual_graph.png)
+
+
 
 
