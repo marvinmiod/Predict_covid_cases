@@ -5,6 +5,13 @@ Created on Fri May 20 09:04:01 2022
 This is a deep learning model using LSTM neural network to predict new cases 
 (cases_new) in Malaysia using the past 30 days of number of cases.
 
+# predict new cases 30 days only
+# dont use batch normalization, never ever
+# node set 64 and above
+# dont add validation data in the model.fit
+# sequence/time series dont do train/test split because its in sequence data
+# training windows size 30 days, predict 1 day
+#
 
 @author: Marvin
 """
@@ -43,10 +50,10 @@ from sklearn.experimental import enable_iterative_imputer
 from sklearn.impute import IterativeImputer
 from sklearn.metrics import mean_absolute_error
 
+## import this in new file
+#from Predict_covid_module import ModelCreation
 
-#%% to add in anther file
 
-#from Article_analysis_module import TrainingHistory
 
 
 #%%
@@ -65,9 +72,53 @@ DATASET_TRAIN_PATH = os.path.join(os.getcwd(),'dataset','cases_malaysia_train.cs
 DATASET_TEST_PATH = os.path.join(os.getcwd(),'dataset','cases_malaysia_test.csv')
 
 
-#%%
+#%% Def Function
 
- 
+def create_model(inputs):
+        """
+        This function creates the Sequential LSTM model
+        and dropout layer
+
+        Parameters
+        ----------
+        num_words : TYPE
+            DESCRIPTION.
+        num_categories : TYPE
+            DESCRIPTION.
+        embedding_output : TYPE, optional
+            DESCRIPTION. The default is 128.
+        nodes : TYPE, optional
+            DESCRIPTION. The default is 64.
+        dropout_value : TYPE, optional
+            DESCRIPTION. The default is 0.2.
+
+        Returns
+        -------
+        model : TYPE
+            DESCRIPTION.
+
+        """
+        
+        input_data_shape = x_train.shape[1] # this one is 30
+
+        model = Sequential()
+        #input node can be 64 or 128 or more
+        model.add(LSTM(64, activation='tanh',
+                       return_sequences=True, #return sequences is for 3 dimension data
+                       input_shape=(input_data_shape,1))) # input shape of x train
+        
+        model.add(Dropout(0.2)) # dropout layer
+        #model.add(LSTM(64, return_sequences=True)) # hidden layer
+        model.add(LSTM(64))
+        model.add(Dropout(0.2))
+        model.add(Dense(1, activation='relu'))
+        
+        model.summary()
+        plot_model(model)
+        
+        
+        return model   
+    
 
 #%% EDA
 
@@ -75,29 +126,7 @@ DATASET_TEST_PATH = os.path.join(os.getcwd(),'dataset','cases_malaysia_test.csv'
 df_train = pd.read_csv(DATASET_TRAIN_PATH)
 df_test = pd.read_csv(DATASET_TEST_PATH)
 
-'''
-column_names = ['date','cases_new','cases_import','cases_recovered',
-                'cases_active','cases_cluster','cases_unvax',
-                'cases_pvax','cases_fvax','cases_boost','cases_child',
-                'cases_adolescent','cases_adult','cases_elderly',
-                'cases_0_4','cases_5_11','cases_12_17','cases_18_29',
-                'cases_30_39','cases_40_49','cases_50_59','cases_60_69',
-                'cases_70_79','cases_80','cluster_import','cluster_religious',
-                'cluster_community','cluster_highRisk','cluster_education',
-                'cluster_detentionCentre','cluster_workplace']
 
-df_test.columns = column_names
-'''
-
-#%%
-
-# predict new cases 30 days only
-# dont use batch normalization, never ever
-# node set 64 and above
-# dont add validation data in the model.fit
-# sequence/time series dont do train/test split because its in sequence data
-# training windows size 30 days, predict 1 day
-#
 
 #%%
 
@@ -109,10 +138,10 @@ df_train['cases_new'].describe().T
 df_train['cases_new'].dtypes
 df_train.dtypes
 
-dummy_df_train = df_train.copy() # to create a backup copy
+# to create a backup copy
+dummy_df_train = df_train.copy() 
 dummy_df_test = df_test.copy()
-# convert 2 column only
-# 
+
 
 
 #%%% Clean train data
@@ -141,16 +170,17 @@ df_test_case = pd.to_numeric(df_test['cases_new'], errors='coerce')
 df_test_case.isna().sum()
 df_test_case.describe().T
 df_test_case.info()
+df_test_case.median()
 
 plt.figure()
 #plt.xlabel('date')
 plt.plot(df_test_case)
 plt.show
 
-#%% visualise data
+#%% Fill NA with median value
 # This code below is to fill in the missing value with median value 
-# but it will skewed the graph as in low cases during early 2020 or high cases 
-# or high cases 20k in 2021 will see it sudden drop to 1300
+# but it will skewed the graph as in low cases during early 2020  
+# or high cases (20k) in 2021 will see a sudden drop to 1300 if use median
 #df_date_new_cases.isna().sum()
 
 #msno.bar(df_date_new_cases)
@@ -189,13 +219,12 @@ plt.show
 # TEST Data: drop NaN values from test data new_cases
 df_test_case_drop = df_test_case.dropna()
 
-# visualise the data after 12 data being drop
+# visualise the data after 1 data being drop from test dataset
 df_test_case_drop.isna().sum()
 
 plt.figure()
 #plt.xlabel('date')
 plt.plot(df_test_case_drop)
-
 plt.show
 
 
@@ -244,22 +273,15 @@ duration_plus_test = duration+len(x_test_scaled) # 129
 # to get the last X dataset from the combined x train and x test data
 last_dataset = dataset_total[-duration_plus_test:] 
 
-#window_size = 30
-#length_window = window_size+len(x_test_scaled) #30+100=130
-#temp = dataset_total[-length_window:] # get the last 130 numbers
-
-
 
 # create empty list first then append data into x test and y test
 x_test = []
 y_test = []
 
 
-#for i in range(30,last_dataset):
-#    x_test.append(last_dataset[i-duration:i,0])
-#    y_test.append(last_dataset[i,0])
 
-for i in range(duration,129):
+#for i in range(duration,129):
+for i in range(duration, duration_plus_test): # (30, 129) 129 is 30 + 99
     x_test.append(last_dataset[i-duration:i,0])
     y_test.append(last_dataset[i,0])
 
@@ -270,33 +292,9 @@ x_test = np.expand_dims(x_test, axis=-1)
 y_test = np.array(y_test)
 
 
-#%% model training
-# dont add validation: validation_data=(x_test,y_test),
-
-# hist = model.fit(x_train, y_train, epochs=50, 
-          #validation_data=(x_test,y_test),
-#          callbacks=[tensorboard_callback, early_stopping_callback])
 
 #%% Model Creation
-"""
-model = Sequential()
-model.add(LSTM(64, activation='tanh',
-               return_sequences=True, #return sequences is for 3 dimension data
-               input_shape=(x_train.shape[1],1))) # input shape (60,1)
 
-model.add(Dropout(0.2)) # dropout layer
-#model.add(LSTM(64, return_sequences=True)) # hidden layer
-model.add(LSTM(64))
-model.add(Dropout(0.2))
-model.add(LSTM(64))
-model.add(Dropout(0.2))
-model.add(LSTM(64))
-model.add(Dropout(0.2))
-model.add(Dense(1, activation='relu'))
-
-model.summary()
-plot_model(model)
-"""
 input_data_shape = x_train.shape[1] # this one is 30
 
 model = Sequential()
@@ -315,7 +313,7 @@ model.summary()
 plot_model(model)
 
 
-#%% Compile & Model fitting
+#%% Compile & Model training
 
 # tensorboard callback
 tensorboard_callback = TensorBoard(log_dir=log_files, histogram_freq=1)
@@ -326,12 +324,14 @@ early_stopping_callback = EarlyStopping(monitor='loss', patience=5 )
 # Choose Mean Square Error (mse) because its not a regression problem
 model.compile(optimizer='adam', loss='mse', metrics='mse') 
 
-hist = model.fit(x_train, y_train, epochs=10, 
-#                 validation_data=(x_test,y_test),
+hist = model.fit(x_train, y_train, epochs=100, 
                  callbacks=[tensorboard_callback])
 
-
 print(hist.history.keys())
+
+
+#%% Visualise the model using matplotlib
+
 # plot graph
 
 plt.figure()
@@ -342,20 +342,10 @@ plt.ylabel('training loss')
 plt.show()
 
 
-
-#%% Visualise the model using matplotlib
-
-# to use class uncomment below
-#TrainingHistory.training_history(hist)
-
-#training_history(hist)
-
 # to view the tensorboard go to browser type: http://localhost:6006/
 # run in anaconda prompt tf_env: tensorboard --logdir "<path of log files>"
 
-#%% Predicted value (10-May code)
-
-
+#%% Predicted value 
 
 x_test_length = x_test.shape[0] # this is to get the size of x_test row (length)
 # create empty list "predicted" and fit in the data in x_test
